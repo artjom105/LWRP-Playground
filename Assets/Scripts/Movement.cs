@@ -9,7 +9,7 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
     CharacterController characterController;
-
+    Rigidbody rigidbody;
     public float speed = 6.0f;
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
@@ -17,10 +17,13 @@ public class Movement : MonoBehaviour {
     private Vector3 moveDirection = Vector3.zero;
 
     void Start() {
+        rigidbody = GetComponent<Rigidbody>();
         characterController = GetComponent<CharacterController>();
+        gravity = gravity * rigidbody.mass;
     }
 
     void Update() {
+        gravity = gravity * rigidbody.mass;
         if (characterController.isGrounded == true) {
             // We are grounded, so recalculate
             // move direction directly from axes
@@ -32,9 +35,12 @@ public class Movement : MonoBehaviour {
             }
 
        } else if(characterController.isGrounded == false) {
-            if (Input.GetButton("Jump")) {
+            // Air Control
+            /*moveDirection = new Vector3(Input.GetAxis("Horizontal"), -gravity * Time.deltaTime, 0.0f);
+            moveDirection *= speed;*/
+            /*if (Input.GetButton("Jump")) {
                 moveDirection.y = jumpSpeed;
-            }
+            }*/
         }
 
 
@@ -42,6 +48,7 @@ public class Movement : MonoBehaviour {
         // Apply gravity. Gravity is multiplied by deltaTime twice (once here, and once below
         // when the moveDirection is multiplied by deltaTime). This is because gravity should be applied
         // as an acceleration (ms^-2)
+        
         moveDirection.y -= gravity * Time.deltaTime;
         // Move the controller
         characterController.Move(moveDirection * Time.deltaTime);
